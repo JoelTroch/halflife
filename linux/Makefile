@@ -25,7 +25,11 @@ DBG_SRC_DIR=$(SOURCE_DIR)/dbg
 ifeq ($(PERFORCE), "")
 	PERFORCE=true
 endif
+ifeq ($(VALVE_TOOLS), "")
+	VALVE_TOOLS=true
+endif
 MAKEENV:=PERFORCE=$(PERFORCE)
+MAKEENV:=VALVE_TOOLS=$(VALVE_TOOLS)
 
 BUILD_OBJ_DIR=$(BUILD_DIR)/obj
 
@@ -33,9 +37,15 @@ ARCH=i386
 ELF-GC-DYNSTR=./elf-gc-dynstr
 
 ifeq ($(OS),Linux)
-	CC="/valve/bin/gcc-4.6 -m32"
-	CPLUS="/valve/bin/g++-4.6 -m32"
-	CPP_LIB:=-L$(shell /valve/bin/g++-4.6 -m32 -print-file-name=libstdc++.so | xargs dirname) -lstdc++ -ldl -lpthread
+	ifeq ($(VALVE_TOOLS), true)
+		CC="/valve/bin/gcc-4.6 -m32"
+		CPLUS="/valve/bin/g++-4.6 -m32"
+		CPP_LIB:=-L$(shell /valve/bin/g++-4.6 -m32 -print-file-name=libstdc++.so | xargs dirname) -lstdc++ -ldl -lpthread
+	else
+		CC="gcc-4.6 -m32"
+		CPLUS="g++-4.6 -m32"
+		CPP_LIB:=-L$(shell g++-4.6 -m32 -print-file-name=libstdc++.so | xargs dirname) -lstdc++ -ldl -lpthread
+	endif
 endif
 
 ifeq ($(OS),Darwin)

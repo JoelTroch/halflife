@@ -16,7 +16,11 @@ if [ "$UNAME" == "Darwin" ]; then
 	exit 0;
 fi
 
-OBJCOPY=/valve/bin/objcopy
+if [ -z "$VALVE_TOOLS" ]; then
+	OBJCOPY=/valve/bin/objcopy
+else
+	OBJCOPY=objcopy
+fi
 
 function usage {
 	echo "$0 /path/to/input/file [-o /path/to/output/file ]"
@@ -53,9 +57,13 @@ if [ "$OUTFILEDIR" != "$INFILEDIR" ]; then
 fi
 
 pushd "$INFILEDIR"
-p4 edit "$OUTFILE"
+if [ "$PERFORCE" == true ]; then
+	p4 edit "$OUTFILE"
+fi
 $OBJCOPY "$INFILE" "$OUTFILE"
 $OBJCOPY --add-gnu-debuglink="$OUTFILE" "$INFILE"
-p4 revert -a "$OUTFILE"
+if [ "$PERFORCE" == true ]; then
+	p4 revert -a "$OUTFILE"
+fi
 popd
 
