@@ -234,8 +234,21 @@ void CPython::Reload( void )
 #endif
 
 	DefaultReload( 6, PYTHON_RELOAD, 2.0, bUseScope );
+	SetThink( &CPython::PlayReloadSound );
+	pev->nextthink = gpGlobals->time + 1.9;
 }
 
+void CPython::PlayReloadSound( void )
+{
+	// Don't play the sound if we switched to another weapon then back to the
+	// Python if we were reloading it.
+	if ( m_fInReload )
+	{
+		EMIT_SOUND( ENT( pev ), CHAN_ITEM, "weapons/357_reload1.wav", 1.0, ATTN_NORM );
+		SetThink( NULL );
+		pev->nextthink = gpGlobals->time;
+	}
+}
 
 void CPython::WeaponIdle( void )
 {

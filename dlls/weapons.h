@@ -543,6 +543,7 @@ public:
 	BOOL Deploy( void );
 	void Holster( int skiplocal = 0 );
 	void Reload( void );
+	void EXPORT PlayReloadSound( void );
 	void WeaponIdle( void );
 
 	BOOL m_fInZoom;// don't save this. 
