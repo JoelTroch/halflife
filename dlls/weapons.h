@@ -516,6 +516,7 @@ public:
 	void Holster( int skiplocal = 0 );
 	int m_iSwing;
 	TraceResult m_trHit;
+	void WeaponIdle( void );
 
 	virtual BOOL UseDecrement( void )
 	{ 
