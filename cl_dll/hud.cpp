@@ -280,6 +280,19 @@ int __MsgFunc_AllowSpec(const char *pszName, int iSize, void *pbuf)
 	return 0;
 }
 
+// Shepard - Receiving our data
+int __MsgFunc_HPSaveData( const char *pszName, int iSize, void *pbuf )
+{
+	BEGIN_READ( pbuf, iSize );
+
+	bool bRhetoricalQuestion = READ_BYTE() == 1 ? true : false;
+	int iMagicNumber = READ_BYTE();
+
+	gEngfuncs.Con_Printf( "[HP SaveData - Client] Just received that bRhetoricalQuestion = %s and iMagicNumber = %d\n", bRhetoricalQuestion ? "TRUE" : "FALSE", iMagicNumber );
+
+	return 0;
+}
+
 // This is called every time the DLL is loaded
 void CHud :: Init( void )
 {
@@ -318,6 +331,9 @@ void CHud :: Init( void )
 
 	// VGUI Menus
 	HOOK_MESSAGE( VGUIMenu );
+
+	// Shepard - Receiving our data
+	HOOK_MESSAGE( HPSaveData );
 
 	CVAR_CREATE( "hud_classautokill", "1", FCVAR_ARCHIVE | FCVAR_USERINFO );		// controls whether or not to suicide immediately on TF class switch
 	CVAR_CREATE( "hud_takesshots", "0", FCVAR_ARCHIVE );		// controls whether or not to automatically take screenshots at the end of a round

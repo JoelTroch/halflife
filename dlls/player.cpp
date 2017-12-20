@@ -36,6 +36,9 @@
 #include "game.h"
 #include "pm_shared.h"
 #include "hltv.h"
+// Shepard - Without that define, MSVC will complain that the savedata is re-defined again
+#define DONT_DEFINE_SAVE_DATA_AGAIN
+#include "CHPSaveData.h"
 
 // #define DUCKFIX
 
@@ -189,6 +192,8 @@ int gmsgStatusText = 0;
 int gmsgStatusValue = 0; 
 
 
+// Shepard - Sending our data to the client
+int gmsgHPSaveData = 0;
 
 void LinkUserMessages( void )
 {
@@ -236,6 +241,8 @@ void LinkUserMessages( void )
 	gmsgStatusText = REG_USER_MSG("StatusText", -1);
 	gmsgStatusValue = REG_USER_MSG("StatusValue", 3); 
 
+	// Shepard - Sending our data to the client
+	gmsgHPSaveData = REG_USER_MSG( "HPSaveData", 2 );
 }
 
 LINK_ENTITY_TO_CLASS( player, CBasePlayer );
@@ -3955,6 +3962,11 @@ void CBasePlayer :: UpdateClientData( void )
 		
 		MESSAGE_BEGIN( MSG_ONE, gmsgResetHUD, NULL, pev );
 			WRITE_BYTE( 0 );
+		MESSAGE_END();
+
+		MESSAGE_BEGIN( MSG_ONE, gmsgHPSaveData, NULL, ENT( pev ) );
+			WRITE_BYTE( g_HPSaveData.m_bRhetoricalQuestion );
+			WRITE_BYTE( g_HPSaveData.m_iMagicNumber );
 		MESSAGE_END();
 
 		if ( !m_fGameHUDInitialized )
