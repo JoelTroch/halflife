@@ -21,12 +21,6 @@
 #include	"gamerules.h"
 #include	"game.h"
 
-// Shepard - Without that define, MSVC will complain that the savedata is re-defined again
-#define DONT_INCLUDE_SAVE_DATA
-#include	"CHPSaveData.h"
-
-bool g_bHPSaveDataSavedRestoredAlready = false;
-CHPSaveData g_HPSaveData;
 
 void EntvarsKeyvalue( entvars_t *pev, KeyValueData *pkvd );
 
@@ -601,14 +595,6 @@ TYPEDESCRIPTION	CBaseEntity::m_SaveData[] =
 
 int CBaseEntity::Save( CSave &save )
 {
-	if ( !g_bHPSaveDataSavedRestoredAlready )
-	{
-		if ( save.WriteFields( "HPSAVEDATA", &g_HPSaveData, g_HPSaveData.m_SaveData, ARRAYSIZE( g_HPSaveData.m_SaveData ) ) == 0 )
-			ALERT( at_console, "[HP] Custom save data couldn\'t be saved! Your saved game may go haywire!\n" );
-
-		g_bHPSaveDataSavedRestoredAlready = true;
-	}
-
 	if ( save.WriteEntVars( "ENTVARS", pev ) )
 		return save.WriteFields( "BASE", this, m_SaveData, ARRAYSIZE(m_SaveData) );
 
@@ -617,14 +603,6 @@ int CBaseEntity::Save( CSave &save )
 
 int CBaseEntity::Restore( CRestore &restore )
 {
-	if ( !g_bHPSaveDataSavedRestoredAlready )
-	{
-		if ( restore.ReadFields( "HPSAVEDATA", &g_HPSaveData, g_HPSaveData.m_SaveData, ARRAYSIZE( g_HPSaveData.m_SaveData ) ) == 0 )
-			ALERT( at_console, "[HP] Custom save data couldn\'t be restored! Your saved game may go haywire!\n" );
-
-		g_bHPSaveDataSavedRestoredAlready = true;
-	}
-
 	int status;
 
 	status = restore.ReadEntVars( "ENTVARS", pev );

@@ -24,6 +24,4 @@ TYPEDESCRIPTION CHPSaveData::m_SaveData[] =
 
 extern CHPSaveData g_HPSaveData;
 
-extern bool g_bHPSaveDataSavedRestoredAlready;
-
 #endif // CHPSAVEDATA_H

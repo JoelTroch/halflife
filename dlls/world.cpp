@@ -33,9 +33,9 @@
 #include "weapons.h"
 #include "gamerules.h"
 #include "teamplay_gamerules.h"
-// Shepard - Without that define, MSVC will complain that the savedata is re-defined again
-#define DONT_DEFINE_SAVE_DATA_AGAIN
 #include "CHPSaveData.h"
+
+CHPSaveData g_HPSaveData;
 
 extern CGraph WorldGraph;
 extern CSoundEnt *pSoundEnt;
@@ -374,6 +374,9 @@ TYPEDESCRIPTION	gGlobalEntitySaveData[] =
 
 int CGlobalState::Save( CSave &save )
 {
+	if ( !save.WriteFields( "HPSAVEDATA", &g_HPSaveData, g_HPSaveData.m_SaveData, ARRAYSIZE( g_HPSaveData.m_SaveData ) ) )
+		ALERT( at_console, "[HP] Custom save data couldn\'t be saved! Your saved game may go haywire!\n" );
+
 	int i;
 	globalentity_t *pEntity;
 
@@ -394,6 +397,9 @@ int CGlobalState::Save( CSave &save )
 
 int CGlobalState::Restore( CRestore &restore )
 {
+	if ( !restore.ReadFields( "HPSAVEDATA", &g_HPSaveData, g_HPSaveData.m_SaveData, ARRAYSIZE( g_HPSaveData.m_SaveData ) ) )
+		ALERT( at_console, "[HP] Custom save data couldn\'t be restored! Your saved game may go haywire!\n" );
+
 	int i, listCount;
 	globalentity_t tmpEntity;
 
@@ -438,9 +444,6 @@ void CGlobalState::ClearStates( void )
 
 void SaveGlobalState( SAVERESTOREDATA *pSaveData )
 {
-	// Shepard - Tell the save code to save our data
-	g_bHPSaveDataSavedRestoredAlready = false;
-
 	CSave saveHelper( pSaveData );
 	gGlobalState.Save( saveHelper );
 }
@@ -448,9 +451,6 @@ void SaveGlobalState( SAVERESTOREDATA *pSaveData )
 
 void RestoreGlobalState( SAVERESTOREDATA *pSaveData )
 {
-	// Shepard - Tell the restore code to restore our data
-	g_bHPSaveDataSavedRestoredAlready = false;
-
 	CRestore restoreHelper( pSaveData );
 	gGlobalState.Restore( restoreHelper );
 }
