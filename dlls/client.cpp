@@ -39,6 +39,9 @@
 #include "usercmd.h"
 #include "netadr.h"
 #include "pm_shared.h"
+// Shepard - Without that define, MSVC will complain that the savedata is re-defined again
+#define DONT_DEFINE_SAVE_DATA_AGAIN
+#include "CHPSaveData.h"
 
 #if !defined ( _WIN32 )
 #include <ctype.h>
@@ -593,6 +596,19 @@ void ClientCommand( edict_t *pEntity )
 
 		if ( pPlayer->IsObserver() )
 			pPlayer->Observer_FindNextPlayer( atoi( CMD_ARGV(1) )?true:false );
+	}
+	// Shepard - Testing the save/restore without an entity
+	else if ( FStrEq( pcmd, "hpsavedata_generate" ) )
+	{
+		ALERT( at_console, "[HP SaveData] Generating and assigning...\n" );
+		g_HPSaveData.m_bRhetoricalQuestion = RANDOM_LONG( 0, 1 );
+		g_HPSaveData.m_iMagicNumber = RANDOM_LONG( 0, 43 );
+		ALERT( at_console, "[HP SaveData] m_bRhetoricalQuestion = %s - m_iMagicNumber = %d\n", g_HPSaveData.m_bRhetoricalQuestion ? "TRUE" : "FALSE", g_HPSaveData.m_iMagicNumber );
+	}
+	else if ( FStrEq( pcmd, "hpsavedata_read" ) )
+	{
+		ALERT( at_console, "[HP SaveData] Reading...\n" );
+		ALERT( at_console, "[HP SaveData] m_bRhetoricalQuestion = %s - m_iMagicNumber = %d\n", g_HPSaveData.m_bRhetoricalQuestion ? "TRUE" : "FALSE", g_HPSaveData.m_iMagicNumber );
 	}
 	else if ( g_pGameRules->ClientCommand( GetClassPtr((CBasePlayer *)pev), pcmd ) )
 	{

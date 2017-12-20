@@ -33,6 +33,9 @@
 #include "weapons.h"
 #include "gamerules.h"
 #include "teamplay_gamerules.h"
+// Shepard - Without that define, MSVC will complain that the savedata is re-defined again
+#define DONT_DEFINE_SAVE_DATA_AGAIN
+#include "CHPSaveData.h"
 
 extern CGraph WorldGraph;
 extern CSoundEnt *pSoundEnt;
@@ -435,6 +438,9 @@ void CGlobalState::ClearStates( void )
 
 void SaveGlobalState( SAVERESTOREDATA *pSaveData )
 {
+	// Shepard - Tell the save code to save our data
+	g_bHPSaveDataSavedRestoredAlready = false;
+
 	CSave saveHelper( pSaveData );
 	gGlobalState.Save( saveHelper );
 }
@@ -442,6 +448,9 @@ void SaveGlobalState( SAVERESTOREDATA *pSaveData )
 
 void RestoreGlobalState( SAVERESTOREDATA *pSaveData )
 {
+	// Shepard - Tell the restore code to restore our data
+	g_bHPSaveDataSavedRestoredAlready = false;
+
 	CRestore restoreHelper( pSaveData );
 	gGlobalState.Restore( restoreHelper );
 }
